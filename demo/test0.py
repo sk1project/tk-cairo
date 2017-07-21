@@ -12,7 +12,7 @@ import Tkinter
 import cairo
 import _tkcairo
 
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 # -*- coding: utf-8 -*-
 
@@ -37,56 +37,64 @@ class tkCairoWidget(Tkinter.Frame):
     def __init__(self, master, **kw):
         Tkinter.Frame.__init__(self, master, **kw)
         self.tk.call(self._w, "configure", "-background", "")
-        self.bind("<Visibility>", self.set_update)
-        self.bind("<Expose>", self.set_update)
-        self.bind("<Configure>", self.reinit)
-        self.bind("<Property>", self.reinit)
+        self.bind("<Visibility>", self.refresh)
+        self.bind("<Expose>", self.refresh)
+        self.bind("<Configure>", self.refresh)
+        self.bind("<Property>", self.refresh)
 
-
-    def refresh(self):
-        if self.widget_ctx is None:
-            self.init()
+    def refresh(self, *args):
+        self.init()
+        if not self.buffer or not self.widget_surface:return
         self.draw()
-        # print 'test1'
-        # self.widget_ctx.set_source_surface(self.buffer)
-        # print 'test2'
-        # self.widget_ctx.paint()
-        # print 'test3'
+        self.widget_ctx.set_source_surface(self.buffer)
+        self.widget_ctx.paint()
 
     def set_update(self, *args):
         if not self.flag is None:
             self.after_cancel(self.flag)
         self.flag = self.after(1, self.refresh)
 
-
     def init(self):
-        print self._w
-        print self.tk.interpaddr()
-
         self.widget_surface = _tkcairo.tk_surface_new(self._w, self.tk.interpaddr())
-        print 'here', self.widget_surface
         if not self.widget_surface: return
-        self.buffer = cairo.ImageSurface(cairo.FORMAT_RGB24,
-                                         self.winfo_width(), self.winfo_height())
+        w, h = self.winfo_width(), self.winfo_height()
+        if not w or not h: return
+        self.buffer = cairo.ImageSurface(cairo.FORMAT_RGB24, w, h)
         self.widget_ctx = cairo.Context(self.widget_surface)
-        print 'here', self.widget_ctx
         self.buffer_ctx = cairo.Context(self.buffer)
-        print 'here', self.buffer_ctx
-
 
     def reinit(self, *arg):
         self.init()
         self.draw()
 
-
     def clear(self):
-        self.widget_ctx.set_source_rgb(1, 1, 1)
-        self.widget_ctx.rectangle(0, 0, self.winfo_width(), self.winfo_height())
-        self.widget_ctx.fill()
-
+        self.buffer_ctx.set_source_rgb(1, 1, 1)
+        self.buffer_ctx.rectangle(0, 0, self.winfo_width(), self.winfo_height())
+        self.buffer_ctx.fill()
 
     def draw(self):
         self.clear()
+
+        self.buffer_ctx.scale(self.winfo_width() / 1.0, self.winfo_height() / 1.0)
+
+        pat = cairo.LinearGradient(0.0, 0.0, 0.0, 1.0)
+        pat.add_color_stop_rgba(1, 1, 1, 0, 1)
+        pat.add_color_stop_rgba(0, 0, 0, 1, 1)
+
+        self.buffer_ctx.rectangle(0, 0, 1, 1)
+        self.buffer_ctx.set_source(pat)
+        self.buffer_ctx.fill()
+
+        pat = cairo.RadialGradient(0.45, 0.4, 0.1,
+                                   0.4, 0.4, 0.5)
+        pat.add_color_stop_rgba(0, 1, 0, 1, 1)
+        pat.add_color_stop_rgba(1, 0, 1, 0, 1)
+
+        self.buffer_ctx.set_source(pat)
+        self.buffer_ctx.arc(0.5, 0.5, 0.3, 0, 2 * 3.14)
+        self.buffer_ctx.fill()
+        self.buffer_ctx.scale(1.0 / self.winfo_width(), 1.0 / self.winfo_height())
+
 
 root = Tkinter.Tk()
 canvas0 = tkCairoWidget(root, bg="white", width=700, height=500, borderwidth=1)
