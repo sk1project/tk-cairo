@@ -66,14 +66,14 @@ if __name__ == "__main__":
           version='1.8.6',
           description='python&cairo binding for Tkinter widgets',
           author='Igor E. Novikov',
-          author_email='igor.e.novikov@gmail.com',
+          author_email='sk1.project.org@gmail.com',
           maintainer='Igor E. Novikov',
-          maintainer_email='igor.e.novikov@gmail.com',
+          maintainer_email='sk1.project.org@gmail.com',
           license='LGPL v2',
-          url='http://sk1project.org',
-          download_url='http://sk1project.org/',
+          url='http://sk1project.net',
+          download_url='http://sk1project.net/',
           long_description='''tkcairo is a python&cairo binding for Tkinter widgets. 
-			sK1 Team (http://sk1project.org), copyright (c) 2009 by Igor E. Novikov.
+			sK1 Team (http://sk1project.net), copyright (c) 2009-2017 by Igor E. Novikov.
 			''',
           classifiers=[
               'Development Status :: 5 - Stable',
