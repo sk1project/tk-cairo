@@ -37,10 +37,10 @@ class tkCairoWidget(Tkinter.Frame):
     def __init__(self, master, **kw):
         Tkinter.Frame.__init__(self, master, **kw)
         self.tk.call(self._w, "configure", "-background", "")
-        # self.bind("<Visibility>", self.set_update)
-        # self.bind("<Expose>", self.set_update)
-        # self.bind("<Configure>", self.reinit)
-        # self.bind("<Property>", self.reinit)
+        self.bind("<Visibility>", self.set_update)
+        self.bind("<Expose>", self.set_update)
+        self.bind("<Configure>", self.reinit)
+        self.bind("<Property>", self.reinit)
 
 
     def refresh(self):
