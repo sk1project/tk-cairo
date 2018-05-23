@@ -1,6 +1,5 @@
 - name: Hello World Sample
-  wait_for: timeout=120
-  hosts: all
+  wait_for: timeout=300
   tasks:
     - name: Hello Message
       debug:
